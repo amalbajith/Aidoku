@@ -72,6 +72,10 @@ class TabBarController: UITabBarController {
         let libraryViewController = NavigationController(rootViewController: LibraryViewController())
         let browseViewController = NavigationController(rootViewController: BrowseViewController())
         let searchViewController = NavigationController(rootViewController: SearchViewController())
+        
+        // Statistics/Insights tab
+        let insightsHostingController = UIHostingController(rootView: InsightsView())
+        let insightsViewController = NavigationController(rootViewController: insightsHostingController)
 
         let historyPath = NavigationCoordinator(rootViewController: nil)
         let historyHostingController = UIHostingController(rootView: HistoryView()
@@ -111,6 +115,7 @@ class TabBarController: UITabBarController {
         self.settingsPath = settingsPath
 
         libraryViewController.navigationBar.prefersLargeTitles = true
+        insightsViewController.navigationBar.prefersLargeTitles = true
         browseViewController.navigationBar.prefersLargeTitles = true
         historyViewController.navigationBar.prefersLargeTitles = true
         searchViewController.navigationBar.prefersLargeTitles = true
@@ -129,23 +134,30 @@ class TabBarController: UITabBarController {
                     libraryViewController
                 },
                 UITab(
+                    title: NSLocalizedString("INSIGHTS"),
+                    image: UIImage(systemName: "chart.bar.fill"),
+                    identifier: "1"
+                ) { _ in
+                    insightsViewController
+                },
+                UITab(
                     title: NSLocalizedString("BROWSE"),
                     image: UIImage(systemName: "globe"),
-                    identifier: "1"
+                    identifier: "2"
                 ) { _ in
                     browseViewController
                 },
                 UITab(
                     title: NSLocalizedString("HISTORY"),
                     image: UIImage(systemName: "clock.fill"),
-                    identifier: "2"
+                    identifier: "3"
                 ) { _ in
                     historyViewController
                 },
                 UITab(
                     title: NSLocalizedString("SETTINGS"),
                     image: UIImage(systemName: "gear"),
-                    identifier: "3"
+                    identifier: "4"
                 ) { _ in
                     settingsViewController
                 }
@@ -161,26 +173,32 @@ class TabBarController: UITabBarController {
                 image: UIImage(systemName: "books.vertical.fill"),
                 tag: 0
             )
+            insightsViewController.tabBarItem = UITabBarItem(
+                title: NSLocalizedString("INSIGHTS", comment: ""),
+                image: UIImage(systemName: "chart.bar.fill"),
+                tag: 1
+            )
             browseViewController.tabBarItem = UITabBarItem(
                 title: NSLocalizedString("BROWSE", comment: ""),
                 image: UIImage(systemName: "globe"),
-                tag: 1
+                tag: 2
             )
             historyViewController.tabBarItem = UITabBarItem(
                 tabBarSystemItem: .history,
-                tag: 2
+                tag: 3
             )
             searchViewController.tabBarItem = UITabBarItem(
                 tabBarSystemItem: .search,
-                tag: 3
+                tag: 4
             )
             settingsViewController.tabBarItem = UITabBarItem(
                 title: NSLocalizedString("SETTINGS", comment: ""),
                 image: UIImage(systemName: "gear"),
-                tag: 4
+                tag: 5
             )
             viewControllers = [
                 libraryViewController,
+                insightsViewController,
                 browseViewController,
                 historyViewController,
                 searchViewController,
@@ -306,9 +324,9 @@ extension TabBarController: UITabBarControllerDelegate {
     private func checkForSettingsPop() {
         let settingsIndex: Int
         if #available(iOS 26.0, *) {
-            settingsIndex = 3
-        } else {
             settingsIndex = 4
+        } else {
+            settingsIndex = 5
         }
         if selectedIndex == previousSelectedIndex && previousSelectedIndex == settingsIndex {
             settingsPath?.navigationController?.popToRootViewController(animated: true)
