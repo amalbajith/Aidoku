@@ -145,6 +145,29 @@ struct InsightsView: View {
             }
         }
         .navigationTitle(NSLocalizedString("INSIGHTS"))
+        #if DEBUG
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    Button("Generate Fake Data") {
+                        Task {
+                            await DebugDataGenerator.generateFakeReadingSessions()
+                            // Reload data after generation
+                            data = await .get()
+                        }
+                    }
+                    Button("Clear All Sessions", role: .destructive) {
+                        Task {
+                            await DebugDataGenerator.clearAllReadingSessions()
+                            data = await .get()
+                        }
+                    }
+                } label: {
+                    Image(systemName: "ellipsis.circle")
+                }
+            }
+        }
+        #endif
         .task {
             guard data.currentStreak == 0 else { return }
             data = await .get()
